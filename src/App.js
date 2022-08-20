@@ -2,12 +2,10 @@ import './App.css';
 import Main from './components/main';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import rootReducer  from './redux/reducers';
+
 import * as ACTIONS  from './redux/actions';
 import toggles from './shared/toggles'
-
-const store= createStore(rootReducer);
+import store from './redux/store'
 
 
 function App() {
