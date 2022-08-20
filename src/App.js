@@ -1,6 +1,5 @@
 import './App.css';
 import Main from './components/main';
-import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { ConfigureStore } from './redux/configStore';
 
@@ -21,7 +20,7 @@ function App() {
       >
         <div className="App">
           <Main />
-          { Object.keys(toggles).map(key => <button onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
+          { Object.keys(toggles).map(key => <button key={key} onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
         </div>
        </PersistGate>
     </Provider>
