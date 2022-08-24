@@ -6,7 +6,9 @@ import { ConfigureStore } from './redux/configStore';
 import { PersistGate } from 'redux-persist/es/integration/react';
 
 import * as ACTIONS  from './redux/actions';
-import toggles from './shared/toggles'
+import toggles from './shared/toggles';
+
+
 
 const { persistor, store } = ConfigureStore();
 
@@ -19,7 +21,7 @@ function App() {
         persistor={persistor}
       >
         <div className="App">
-          <Main />
+          <Main  />
           { Object.keys(toggles).map(key => <button key={key} onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
         </div>
        </PersistGate>
