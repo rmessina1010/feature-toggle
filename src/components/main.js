@@ -1,13 +1,20 @@
-import FToggle, {Feature1, Feature2, Feature3, ToggleImports} from './features'
+import FToggle, {Feature1, Feature2, Feature3, ToggleImports, mapStateToProps} from './features';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
 
-//const All = await FToggleImports("f1", "./dept.js");
-//console.log(All);
 
-const Main = ({toggle})=> {
+let xx = [{path:"shared/dep1", keys:[{key:'namedExp1'}]}, {path:"shared/dep1"}, {path:"shared/dep3"}];
 
-   ToggleImports("f1", toggle, ["../shared/dep1"]).then(
-    all => console.log(all )
-   );
+const Main = ({toggles})=> {
+    useEffect( ()=>{
+        ToggleImports('f2',toggles, xx ).then(
+            imps => {
+                console.log('toggling import', imps);
+            }
+        );
+     },[toggles]);
+
+
      return (<div>
         <h1>Hello World.</h1>
         <p>This is a test</p>
@@ -23,4 +30,4 @@ const Main = ({toggle})=> {
         </FToggle>
     </div>)
 }
-export default Main;
+export default connect(mapStateToProps)(Main);
