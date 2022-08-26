@@ -39,8 +39,13 @@ const FToggle = ({fname, toggles, children })=>{
 }
 
 export const ToggleImports =  async (fname, toggles, imports=[])=>{
-     if (!toggles[fname]) { return Promise.reject(`${fname} isn't ON`); }
+    // short circuit  with empy object if: no imports,  improper imports data, toggle not present or off
+    if (!Array.isArray(imports) || imports.length === 0 || !toggles[fname] ) { return Promise.resolve({}); }
+
+    //do import
     const imported = await Promise.all(imports.map(imp=> import(`../${imp.path}`)));
+
+    // prep import results
     const results ={} ;
     imports.forEach(
         (imp, index) =>{
@@ -59,6 +64,8 @@ export const ToggleImports =  async (fname, toggles, imports=[])=>{
         });
     return results;
 }
+
+
 
 export default connect(mapStateToProps)(FToggle);
 
