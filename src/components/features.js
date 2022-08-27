@@ -34,16 +34,17 @@ export const Feature3= (props)=>{
     )
 }
 
-const FToggle = ({fname, toggles, children })=>{
-    return <> { !fname || toggles[fname] ? children : null }</>
+const FToggle = ({fname, toggles, children, old=null})=>{
+    return  (!fname || toggles[fname]) ? <>{children}</> : old ;
 }
 
-export const ToggleImports =  async (fname, toggles, imports=[])=>{
+
+export const ToggleImports =  await function (fname, toggles, imports=[]){
     // short circuit  with empy object if: no imports,  improper imports data, toggle not present or off
     if (!Array.isArray(imports) || imports.length === 0 || !toggles[fname] ) { return Promise.resolve({}); }
 
     //do import
-    const imported = await Promise.all(imports.map(imp=> import(`../${imp.path}`)));
+    const imported =  Promise.all(imports.map(imp=> import(`../${imp.path}`)));
 
     // prep import results
     const results ={} ;

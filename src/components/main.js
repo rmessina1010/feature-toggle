@@ -18,10 +18,14 @@ const Main = ({toggles})=> {
      return (<div>
         <h1>Hello World.</h1>
         <p>This is a test</p>
-        <FToggle fname="f1">
-            <Feature1/>
-        </FToggle>
-        <FToggle fname="f2">
+        <FToggle fname="f1"
+            old={
+            <p>Am the outbound component</p>
+            }
+            children={ <Feature1/>}
+        />
+
+         <FToggle fname="f2">
             <Feature2/>
             <p>local adition</p>
         </FToggle>
