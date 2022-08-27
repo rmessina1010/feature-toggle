@@ -66,6 +66,28 @@ export const ToggleImports =  await function (fname, toggles, imports=[]){
     return results;
 }
 
+export const FToggleImport =  async function (fname, fromFile, imports =[], toggles){
+    // short circuit
+    if ( !toggles[fname] ) { return {}; }
+
+    //do import
+    const imported =  await import(`../${fromFile}`);
+    if (!Array.isArray(imports) || !imports.length ) { return  {...imported}; }
+
+    // return  destructured  results
+    return imports.reduce(
+        (results, imp) => {
+            if (typeof imp === 'string' || imp instanceof String){
+                return {...results, [imp]: imported[imp]}
+            } else if (typeof imp.name === 'string' || imp.name instanceof String) {
+                let as = (typeof imp.as === 'string' || imp.as instanceof String) ? imp.as : imp.name;
+                return {...results, [as]: imported[imp.name]}
+            }
+           return results;
+        }, {});
+ }
+
+
 
 
 export default connect(mapStateToProps)(FToggle);
