@@ -92,5 +92,9 @@ export const FToggleImport =  async function (fname, fromFile, toggles, imports 
         }, {});
  }
 
+ export function isFeatureON(fname,toggles){
+    return  (toggles[fname] === true) ; }
+
+
 export default connect(mapStateToProps)(FToggle);
 
