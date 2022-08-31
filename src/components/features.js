@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import {store} from '../redux/configStore';
 
 export function mapStateToProps(state) {
   const { toggles } = state;
@@ -39,7 +40,9 @@ const FToggle = ({fname, toggles, children, old=null})=>{
 }
 
 
-export const ToggleImports =  await function (fname, toggles, imports=[]){
+export const ToggleImports =  await function (fname, imports=[]){
+    const { toggles } = store.getState();
+
     // short circuit  with empy object if: no imports,  improper imports data, toggle not present or off
     if (!Array.isArray(imports) || imports.length === 0 || !toggles[fname] ) { return Promise.resolve({}); }
 
@@ -66,12 +69,15 @@ export const ToggleImports =  await function (fname, toggles, imports=[]){
     return results;
 }
 
-export const FToggleImportCached =  async function (fname, fromFile, toggles, imports =[], cache ){
+export const FToggleImportCached =  async function (fname, fromFile, imports =[], cache ){
+    const { toggles } = store.getState();
     if ( !cache[fname] && toggles[fname]) { return FToggleImport(fname, fromFile, toggles, imports);}
     return  Promise.resolve( false );
 }
 
-export const FToggleImport =  async function (fname, fromFile, toggles, imports =[] ){
+export const FToggleImport =  async function (fname, fromFile, imports =[] ){
+    const { toggles } = store.getState();
+
     // short circuit
     if ( !toggles[fname] ) { return {}; }
 
@@ -92,8 +98,10 @@ export const FToggleImport =  async function (fname, fromFile, toggles, imports 
         }, {});
  }
 
- export function isFeatureON(fname,toggles){
-    return  (toggles[fname] === true) ; }
+ export function isFeatureOn(fname){
+    const { toggles } = store.getState();
+    return  (toggles[fname] === true) ;
+}
 
 
 export default connect(mapStateToProps)(FToggle);

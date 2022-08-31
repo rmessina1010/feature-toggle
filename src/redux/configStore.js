@@ -9,9 +9,11 @@ const persistConfig = {
   storage
 }
 
-export const ConfigureStore = () => {
+const ConfigureStore = () => {
       const persistedReducer = persistReducer(persistConfig, rootReducer)
       const store = createStore(persistedReducer, {toggles:{}})
       const persistor = persistStore(store)
       return { persistor, store };
 }
+
+export const { persistor, store } = ConfigureStore();

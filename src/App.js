@@ -1,16 +1,14 @@
 import './App.css';
 import Main from './components/main';
 import { Provider } from 'react-redux';
-import { ConfigureStore } from './redux/configStore';
 
 import { PersistGate } from 'redux-persist/es/integration/react';
 
 import * as ACTIONS  from './redux/actions';
 import toggles from './shared/toggles';
 
+import { persistor, store } from './redux/configStore';
 
-
-const { persistor, store } = ConfigureStore();
 
 function App() {
 
