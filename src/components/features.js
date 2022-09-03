@@ -69,10 +69,15 @@ export const ToggleImports =  await function (fname, imports=[]){
     return results;
 }
 
-export const FToggleImportCached =  async function (fname, fromFile, imports =[], cache ){
+export const FToggleImportCached =  async function (fname, fromFile, imports =[], cache={} ){
     const { toggles } = store.getState();
-    if ( !cache[fname] && toggles[fname]) { return FToggleImport(fname, fromFile, toggles, imports);}
-    return  Promise.resolve( false );
+    if ( toggles[fname] && (!cache[fname] || !cache[fname].lib[fromFile])) {
+        if (!cache[fname]){ cache[fname]={payload:{}, lib:{}}}
+        let payload = await FToggleImport(fname, fromFile, imports);
+        cache[fname].lib[fromFile]=true;
+        cache[fname].payload =  { ...cache[fname].payload, ...payload };
+    }
+    return  cache ;
 }
 
 export const FToggleImport =  async function (fname, fromFile, imports =[] ){

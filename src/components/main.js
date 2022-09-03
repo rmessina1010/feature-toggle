@@ -1,13 +1,23 @@
-import FToggle, {Feature1, Feature2, Feature3, FToggleImportCached, FToggleImport, isFeatureOn, mapStateToProps} from './features';
-//import {  useState } from 'react';
+import FToggle, {Feature1, Feature2, Feature3, FToggleImportCached, isFeatureOn, mapStateToProps} from './features';
+import {  useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-let deps ={};
-if (!deps.f2 && isFeatureOn("f2") ){
-  // deps["f2"] = await import('../shared/dep2');
-  deps["f2"] =  await FToggleImport('f2', 'shared/dep2');
-  console.log(deps);
+
+const calling = async function (deps={}){
+        deps =    FToggleImportCached('f2', 'shared/dep2', [], deps);
+        deps =    FToggleImportCached('f2', 'shared/dep3', [], deps);
+        console.log(deps);
+        return deps;
 }
+let deps= await calling();
+
+
+//if (isFeatureOn("f2") ){
+  /* deps["f2"] = await import('../shared/dep2');*/
+//  deps =  await FToggleImportCached('f2', 'shared/dep2', [], deps);
+//  deps =  await FToggleImportCached('f2', 'shared/dep3', [], deps);
+//  console.log(deps);
+//}
 
 // import getStoredState from 'redux-persist/es/getStoredState';
 
@@ -28,6 +38,27 @@ useEffect( ()=>{
 },[deps, toggles]);
 
  */
+
+const [,setRenderDeps] =useState (false);
+
+useEffect(  ()=>{
+    calling(deps).then(
+        newDeps =>{
+            deps = newDeps;
+            setRenderDeps(d=>!d)
+        }
+    );
+},[]);
+
+useEffect(  ()=>{
+    calling(deps).then(
+        newDeps =>{
+            deps = newDeps;
+            setRenderDeps(d=>!d)
+        }
+    );
+},[toggles]);
+
     return (<div>
         <h1>Hello World.</h1>
         <p>This is a test</p>
@@ -41,7 +72,7 @@ useEffect( ()=>{
 
          <FToggle fname="f2">
             <Feature2/>
-            <p>{"local adition" + deps?.f2?.namedExp2} </p>
+            <p>{"local adition" + deps?.f2?.payload?.namedExp2} </p>
         </FToggle>
         <FToggle fname="f3">
             <Feature3/>
