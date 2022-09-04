@@ -48,15 +48,6 @@ useEffect(  ()=>{
             setRenderDeps(d=>!d)
         }
     );
-},[]);
-
-useEffect(  ()=>{
-    calling(deps).then(
-        newDeps =>{
-            deps = newDeps;
-            setRenderDeps(d=>!d)
-        }
-    );
 },[toggles]);
 
     return (<div>
