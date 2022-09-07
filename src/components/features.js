@@ -103,6 +103,27 @@ export const importFtDeps =  async function (fname, fromFile, imports =[] ){
         }, {});
  }
 
+
+const blankDepObj= {lib:{},payload:{}}
+
+export const ftDepCache = async function (fname, filepaths=[], cache={}){
+    const { toggles } = store.getState();
+    if ( toggles[fname] && !cache[fname]) {
+        const fromArr = filepaths.map( path => importFtDeps(fname, path.from, path.mods));
+        cache[fname]= await Promise.all(fromArr)
+                .then(
+                    impArr => impArr.reduce( (agg, imp,i) => {
+                        agg.lib[filepaths[i].from]=true ;
+                        agg.payload =  { ...agg.payload, ...imp };
+                        return agg;
+                    }
+                    ,blankDepObj)
+                )
+                .catch(() => blankDepObj);
+    }
+    return cache;
+}
+
  export function isFeatureOn(fname){
     const { toggles } = store.getState();
     return  (toggles[fname] === true) ;
