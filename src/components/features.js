@@ -69,7 +69,7 @@ export const ToggleImports =  await function (fname, imports=[]){
     return results;
 }
 
-export const FToggleImportCached =  async function (fname, fromFile, imports =[], cache={} ){
+export const importFtDepsIfNotCached =  async function (fname, fromFile, imports =[], cache={} ){
     const { toggles } = store.getState();
     if ( toggles[fname] && (!cache[fname] || !cache[fname].lib[fromFile])) {
         if (!cache[fname]){ cache[fname]={payload:{}, lib:{}}}
