@@ -1,18 +1,18 @@
-import FToggle, {Feature1, Feature2, Feature3, importFtDepsIfNotCached, isFeatureOn, mapStateToProps} from './features';
+import FToggle, {Feature1, Feature2, Feature3, updateFtDepsCache, isFeatureOn, mapStateToProps} from './features';
 import {  useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 /*
 const calling = async function (deps={}){
-        deps =    await importFtDepsIfNotCached('f2', 'shared/dep2', [], deps);
-        deps =    importFtDepsIfNotCached('f2', 'shared/dep3', [], deps);
+        deps =    await updateFtDepsCache('f2', 'shared/dep2', [], deps);
+        deps =    updateFtDepsCache('f2', 'shared/dep3', [], deps);
         return deps;
 }
 */
 const calling = async function (fname, filepaths=[], deps={}){
 
-        deps =    await importFtDepsIfNotCached('f2', 'shared/dep2', [], deps);
-        deps =    await importFtDepsIfNotCached('f2', 'shared/dep3', [], deps);
+        deps =    await updateFtDepsCache('f2', 'shared/dep2', [], deps);
+        deps =    await updateFtDepsCache('f2', 'shared/dep3', [], deps);
         return deps;
 }
 
@@ -21,8 +21,8 @@ let deps= await calling();
 
 //if (isFeatureOn("f2") ){
   /* deps["f2"] = await import('../shared/dep2');*/
-//  deps =  await importFtDepsIfNotCached('f2', 'shared/dep2', [], deps);
-//  deps =  await importFtDepsIfNotCached('f2', 'shared/dep3', [], deps);
+//  deps =  await updateFtDepsCache('f2', 'shared/dep2', [], deps);
+//  deps =  await updateFtDepsCache('f2', 'shared/dep3', [], deps);
 //  console.log(deps);
 //}
 
@@ -35,7 +35,7 @@ const Main = ({ toggles})=> {
 const  [deps,setDeps] =useState({});
 
 useEffect( ()=>{
-    importFtDepsIfNotCached('f2','shared/dep2', [], deps )
+    updateFtDepsCache('f2','shared/dep2', [], deps )
         .then(
             imps => {
                 if ( imps ) {setDeps({...deps, f2:imps});}

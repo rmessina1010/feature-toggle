@@ -69,18 +69,18 @@ export const ToggleImports =  await function (fname, imports=[]){
     return results;
 }
 
-export const importFtDepsIfNotCached =  async function (fname, fromFile, imports =[], cache={} ){
+export const updateFtDepsCache =  async function (fname, fromFile, imports =[], cache={} ){
     const { toggles } = store.getState();
     if ( toggles[fname] && (!cache[fname] || !cache[fname].lib[fromFile])) {
         if (!cache[fname]){ cache[fname]={payload:{}, lib:{}}}
-        let payload = await FToggleImport(fname, fromFile, imports);
+        let payload = await importFtDeps(fname, fromFile, imports);
         cache[fname].lib[fromFile]=true;
         cache[fname].payload =  { ...cache[fname].payload, ...payload };
     }
     return  cache ;
 }
 
-export const FToggleImport =  async function (fname, fromFile, imports =[] ){
+export const importFtDeps =  async function (fname, fromFile, imports =[] ){
     const { toggles } = store.getState();
 
     // short circuit
