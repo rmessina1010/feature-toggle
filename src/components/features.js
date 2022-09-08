@@ -1,3 +1,5 @@
+
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {store} from '../redux/configStore';
 
@@ -36,6 +38,10 @@ export const Feature3= (props)=>{
 }
 
 const FToggle = ({fname, toggles, children, old=null})=>{
+    const [,setRerend] =useState (false);
+
+    useEffect(()=>{setRerend(r=>!r) },[toggles]);
+
     return  (!fname || toggles[fname]) ? <>{children}</> : old ;
 }
 

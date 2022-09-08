@@ -10,9 +10,8 @@ const f2_imports =[
 let deps= await ftDepCache('f2', f2_imports,{});
 
 
-const Main = ({ toggles})=> {
-
-const [,setRenderDeps] =useState (false);
+const Main = ({ toggles })=> {
+ const [,setRenderDeps] =useState (false);
 
 useEffect(  ()=>{
     ftDepCache('f2', f2_imports, deps).then(
