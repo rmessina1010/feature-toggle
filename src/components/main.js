@@ -1,4 +1,5 @@
-import FToggle, {Feature1, Feature2, Feature3, ftDepCache, isFeatureOn, mapStateToProps} from './features';
+import FToggle, { ftDepCache, isFeatureOn, mapStateToProps} from './toggleSupport';
+import {Feature1, Feature2, Feature3,} from './features'
 import {  useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
