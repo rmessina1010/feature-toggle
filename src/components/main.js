@@ -1,7 +1,6 @@
 import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache} from './toggleSupport';
 import {Feature1, Feature2, Feature3,} from './features'
 import { connect } from 'react-redux';
-import { useEffect } from 'react';
 
 const f2_imports =[
     { from: 'shared/dep2', mods:[]},
@@ -9,21 +8,20 @@ const f2_imports =[
 ];
 
 /* EXTERNAL USEAGE */
-//let deps= await ftDepCache('f2', f2_imports,{});
+// let deps= await ftDepCache('f2', f2_imports,{});
 
 const Main = ()=> {
-
     const [f2Cache,] = useCache('f2',f2_imports);
     const [f3Cache,] = useCache('f3',f2_imports);
 
     return (<div>
         <h1>Hello World.</h1>
-        <button onClick={()=>console.log(f2Cache,isFeatureOn("f2") )}>CLICK</button>
+        <button onClick={()=>console.log( f2Cache ,isFeatureOn("f2") )}>CLICK[for data in console]</button>
         <p>This is a test</p>
         <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Note if component has been not connected to the redux store, or set up in a statefulway, this display may not be accurate. </p>
          <FToggle fname="f1"
             old={
-            <p><b>Am the outbound component;</b> alterate to feature 1</p>
+            <p><b>Am the outbound component;</b> alternate to feature 1</p>
             }
             children={ <Feature1/>}
         />

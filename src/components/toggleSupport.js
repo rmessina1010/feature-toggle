@@ -138,7 +138,7 @@ export const useCache = (fname, filepaths)=>{
             ftDepCacheShallow(fname, filepaths, ocache)
             .then( newDeps => { setOcache(newDeps) ; setFreshRender(!freshRender)});
         }
-    },[filepaths, fname, ocache, toggles]);
+    },[filepaths, fname, ocache, toggles, freshRender]);
     useEffect(()=> run(), [toggles, run]);
     return [ocache];
 }

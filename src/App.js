@@ -19,6 +19,7 @@ function App() {
       >
         <div className="App">
           <Main  />
+          <hr/>
           <h5>This part mimics the feature toggle dashboard</h5>
           { Object.keys(toggles).map(key => <button key={key} onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
         </div>
