@@ -54,7 +54,7 @@ export const ToggleImports =  await function (fname, imports=[]){
 export const updateFtDepsCache =  async function (fname, fromFile, imports =[], cache={} ){
     const { toggles } = store.getState();
     if ( toggles[fname] && (!cache[fname] || !cache[fname].lib[fromFile])) {
-        if (!cache[fname]){ cache[fname]={payload:{}, lib:{}}}
+        if (!cache[fname]){ cache[fname]=blankDepObj}
         let payload = await importFtDeps(fname, fromFile, imports);
         cache[fname].lib[fromFile]=true;
         cache[fname].payload =  { ...cache[fname].payload, ...payload };
@@ -89,18 +89,8 @@ export const importFtDeps =  async function (fname, fromFile, imports =[] ){
 
 export const ftDepCache = async function (fname, filepaths=[], cache={}){
     const { toggles } = store.getState();
-    if ( toggles[fname] && !cache[fname]) {
-        const fromArr = filepaths.map( path => importFtDeps(fname, path.from, path.mods));
-        cache[fname]= await Promise.all(fromArr)
-                .then(
-                    impArr => impArr.reduce( (agg, imp,i) => {
-                        agg.lib[filepaths[i].from]=true ;
-                        agg.payload =  { ...agg.payload, ...imp };
-                        return agg;
-                    }
-                    ,blankDepObj)
-                )
-                .catch(() => blankDepObj);
+    if ( toggles[fname] && (!cache[fname] || Object.entries(cache[fname].payload).length === 0 )) {
+        cache[fname]= await ftDepCacheShallow(fname, filepaths, cache[fname] || blankDepObj);
     }
     return cache;
 }
