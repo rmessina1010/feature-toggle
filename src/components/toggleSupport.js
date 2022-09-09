@@ -106,14 +106,6 @@ export const ftDepCache = async function (fname, filepaths=[], cache={}){
 }
 
 
- export function isFeatureOn(fname){
-    const { toggles } = store.getState();
-    return  (toggles[fname] === true) ;
-}
-
-
-
-
 export const ftDepCacheShallow = async function (fname, filepaths=[],cache){
     const fromArr = filepaths.map( path => importFtDeps(fname, path.from, path.mods));
     console.log(1)
@@ -136,13 +128,18 @@ export const useCache = (fname, filepaths)=>{
     const run =  useCallback(() => {
         if (toggles[fname] && Object.entries(ocache.payload).length === 0){
             ftDepCacheShallow(fname, filepaths, ocache)
-            .then( newDeps => { setOcache(newDeps) ; setFreshRender(!freshRender)});
+            .then( newDeps => { setOcache(newDeps) ; setFreshRender(!freshRender)})
+            .catch( (err) => console.log(err));
         }
     },[filepaths, fname, ocache, toggles, freshRender]);
     useEffect(()=> run(), [toggles, run]);
     return [ocache];
 }
 
+export function isFeatureOn(fname){
+    const { toggles } = store.getState();
+    return  (toggles[fname] === true) ;
+}
 
 
 export default connect(mapStateToProps)(FToggle);
