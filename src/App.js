@@ -6,7 +6,6 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 
 import * as ACTIONS  from './redux/actions';
 import toggles from './shared/toggles';
-
 import { persistor, store } from './redux/configStore';
 
 
@@ -20,6 +19,7 @@ function App() {
       >
         <div className="App">
           <Main  />
+          <h5>This part mimics the feature toggle dashboard</h5>
           { Object.keys(toggles).map(key => <button key={key} onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
         </div>
        </PersistGate>

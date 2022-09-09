@@ -1,11 +1,16 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {store} from '../redux/configStore';
 
 export function mapStateToProps(state) {
   const { toggles } = state;
   return { toggles }
+}
+
+const blankDepObj= {
+    lib:{},
+    payload:{}
 }
 
 const FToggle = ({fname, toggles, children, old=null})=>{
@@ -81,7 +86,6 @@ export const importFtDeps =  async function (fname, fromFile, imports =[] ){
  }
 
 
-const blankDepObj= {lib:{},payload:{}}
 
 export const ftDepCache = async function (fname, filepaths=[], cache={}){
     const { toggles } = store.getState();
@@ -101,10 +105,44 @@ export const ftDepCache = async function (fname, filepaths=[], cache={}){
     return cache;
 }
 
+
  export function isFeatureOn(fname){
     const { toggles } = store.getState();
     return  (toggles[fname] === true) ;
 }
+
+
+
+
+export const ftDepCacheShallow = async function (fname, filepaths=[],cache){
+    const fromArr = filepaths.map( path => importFtDeps(fname, path.from, path.mods));
+    console.log(1)
+    return Promise.all(fromArr)
+            .then(
+                impArr => impArr.reduce(
+                    (agg,imp,i) => {
+                    agg.lib[filepaths[i].from]=true ;
+                    agg.payload =  { ...agg.payload, ...imp };
+                    return agg;
+                    }
+                , cache))
+            .catch((err) => { return blankDepObj;});
+}
+
+export const useCache = (fname, filepaths)=>{
+    const { toggles } = store.getState();
+    const [ocache, setOcache] = useState(blankDepObj);
+    const [ freshRender, setFreshRender] = useState(true);
+    const run =  useCallback(() => {
+        if (toggles[fname] && Object.entries(ocache.payload).length === 0){
+            ftDepCacheShallow(fname, filepaths, ocache)
+            .then( newDeps => { setOcache(newDeps) ; setFreshRender(!freshRender)});
+        }
+    },[filepaths, fname, ocache, toggles]);
+    useEffect(()=> run(), [toggles, run]);
+    return [ocache];
+}
+
 
 
 export default connect(mapStateToProps)(FToggle);
