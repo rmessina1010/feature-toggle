@@ -131,5 +131,9 @@ export function isFeatureOn(fname){
     return  (toggles[fname] === true) ;
 }
 
-
+export function useReRend(){
+   const [renderFlag, setRenderFlag ] = useState(false);
+   const run = useCallback (()=> setRenderFlag(f=>!f),[]);
+   return [renderFlag, run ];
+}
 export default connect(mapStateToProps)(FToggle);

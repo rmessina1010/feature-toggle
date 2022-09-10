@@ -1,4 +1,4 @@
-import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache} from './toggleSupport';
+import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, useReRend} from './toggleSupport';
 import {Feature1, Feature2, Feature3,} from './features'
 import { connect } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -15,16 +15,16 @@ let deps = await depsFoo();
 const Main = ({toggles})=> {
     //const [f2Cache,] = useCache('f2',f2_imports);
     //const [f3Cache,] = useCache('f3',f2_imports);
-    const [,setRenderDeps] =useState (false);
 
+//const [, refresh ] = useReRend()
 useEffect(  ()=>{
-     depsFoo().then(
+    depsFoo().then(
          newDeps =>{
-            deps = newDeps;
-            setRenderDeps(d=>!d)
+         deps = newDeps;
+         //refresh();
         }
     );
-},[toggles]);
+}, [toggles]);
 
 
     useEffect( ()=>{}, [])
@@ -50,5 +50,5 @@ useEffect(  ()=>{
     </div>)
 }
 
-// export default connect(mapStateToProps)(Main);
-export default Main;
+ export default connect(mapStateToProps)(Main);
+// export default Main;
