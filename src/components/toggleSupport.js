@@ -1,7 +1,9 @@
+import _ from "lodash";
 
 import { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {store} from '../redux/configStore';
+
 
 export function mapStateToProps(state) {
   const { toggles } = state;
@@ -131,9 +133,20 @@ export function isFeatureOn(fname){
     return  (toggles[fname] === true) ;
 }
 
+export function hasToggleChanged(old){
+    const { toggles } = store.getState();
+    return [!_.isEqual(toggles, old), toggles];
+}
+
+export function getTogglesState(){
+    const { toggles } = store.getState();
+    return toggles;
+}
+
 export function useReRend(){
    const [renderFlag, setRenderFlag ] = useState(false);
    const run = useCallback (()=> setRenderFlag(f=>!f),[]);
    return [renderFlag, run ];
 }
+
 export default connect(mapStateToProps)(FToggle);
