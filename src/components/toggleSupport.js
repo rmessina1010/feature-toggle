@@ -168,4 +168,16 @@ export function useStoreToggles(depsFoo, upDateDeps ){
    return [ toggles ];
 };
 
+export function useToggles(depsFoo, upDateDeps, toggles ){
+    const [, set_RenderFlag ] = useState(false);
+    const handleUpdate = useCallback(()=>{
+        depsFoo()
+        .then( newDeps =>{
+            upDateDeps(newDeps);
+            set_RenderFlag((rf)=>!rf);
+        });
+    },[depsFoo, upDateDeps]);
+    useEffect(()=>handleUpdate(), [ toggles, handleUpdate ])
+};
+
 export default connect(mapStateToProps)(FToggle);

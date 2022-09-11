@@ -1,4 +1,4 @@
-import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useStoreToggles} from './toggleSupport';
+import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useStoreToggles, useToggles} from './toggleSupport';
 import {Feature1, Feature2, Feature3,} from './features'
 import { connect } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -14,17 +14,18 @@ const depsFoo = async(cch={}) =>  ftDepCache('f2', f2_imports,cch);
 let deps = await depsFoo();
 const updateDeps = (newDeps)=>{ deps = newDeps}
 
-const Main = ()=> {
+const Main = ({ toggles })=> {
     //const [f2Cache,] = useCache('f2',f2_imports);
     //const [f3Cache,] = useCache('f3',f2_imports);
 
-    const [ toggles] = useStoreToggles(depsFoo, updateDeps);
+   useToggles(depsFoo,updateDeps, toggles);
+
 
     return (<div>
         <h1>Hello World.</h1>
         <button onClick={()=>console.log( deps.f2 ,isFeatureOn("f2") )}>CLICK[for data in console]</button>
         <p>This is a test</p>
-        <p>f2 is {toggles.f2 ? 'on' : 'off'}* <br/> Needs to connect component to store or use useStoreToggles custom hook </p>
+        <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Needs to connect component to store  or use useStoreToggles custom hook </p>
          <FToggle fname="f1"
             old={
             <p><b>Am the outbound component;</b> alternate to feature 1</p>
@@ -42,5 +43,5 @@ const Main = ()=> {
     </div>)
 }
 
-//export default connect(mapStateToProps)(Main);
- export default Main;
+export default connect(mapStateToProps)(Main);
+//export default Main;
