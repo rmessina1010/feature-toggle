@@ -1,6 +1,6 @@
-import _ from "lodash";
+import _, { set } from "lodash";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import {store} from '../redux/configStore';
 
@@ -148,5 +148,24 @@ export function useReRend(){
    const run = useCallback (()=> setRenderFlag(f=>!f),[]);
    return [renderFlag, run ];
 }
+
+export function useStoreToggles(depsFoo, upDateDeps ){
+
+    const { toggles:storeTog } = store.getState();
+    const [toggles, setToggles] = useState(storeTog);
+
+    const handleToggleChange = useCallback(()=>{
+        depsFoo()
+        .then( newDeps =>{
+            upDateDeps(newDeps);
+            const { toggles:newTogs } = store.getState();
+            setToggles(()=>newTogs);
+        });
+    }, [depsFoo, upDateDeps]);
+
+    useEffect(()=>store.subscribe(handleToggleChange),[handleToggleChange])
+
+   return [ toggles ];
+};
 
 export default connect(mapStateToProps)(FToggle);
