@@ -56,9 +56,9 @@ export const ToggleImports =  await function (fname, imports=[]){
 export const updateFtDepsCache =  async function (fname, fromFile, imports =[], cache={} ){
     const { toggles } = store.getState();
     if ( toggles[fname] && (!cache[fname] || !cache[fname].lib[fromFile])) {
-        if (!cache[fname]){ cache[fname]=blankDepObj}
+        if (!cache[fname]){ cache[fname]={...blankDepObj}}
         let payload = await importFtDeps(fname, fromFile, imports);
-        cache[fname].lib[fromFile]=true;
+        cache[fname].lib={...cache[fname].lib, [fromFile]:true};
         cache[fname].payload =  { ...cache[fname].payload, ...payload };
     }
     return  cache ;
@@ -92,7 +92,7 @@ export const importFtDeps =  async function (fname, fromFile, imports =[] ){
 export const ftDepCache = async function (fname, filepaths=[], cache={}){
     const { toggles } = store.getState();
     if ( toggles[fname] && (!cache[fname] || Object.entries(cache[fname].payload).length === 0 )) {
-        cache[fname]= await ftDepCacheShallow(fname, filepaths, cache[fname] || blankDepObj);
+        cache[fname]= await ftDepCacheShallow(fname, filepaths, cache[fname] || {...blankDepObj});
     }
     return cache;
 }
@@ -105,17 +105,17 @@ export const ftDepCacheShallow = async function (fname, filepaths=[],cache){
             .then(
                 impArr => impArr.reduce(
                     (agg,imp,i) => {
-                    agg.lib[filepaths[i].from]=true ;
+                    agg.lib = {...agg.lib, [filepaths[i].from]:true} ;
                     agg.payload =  { ...agg.payload, ...imp };
                     return agg;
                     }
                 , cache))
-            .catch((err) => { return blankDepObj;});
+            .catch((err) => { return {...blankDepObj};});
 }
 
 export const useCache = (fname, filepaths)=>{
     const { toggles } = store.getState();
-    const [ocache, setOcache] = useState(blankDepObj);
+    const [ocache, setOcache] = useState({...blankDepObj});
     const [ freshRender, setFreshRender] = useState(true);
     const run =  useCallback(() => {
         if (toggles[fname] && Object.entries(ocache.payload).length === 0){
@@ -181,17 +181,17 @@ export function useToggles(depsFoo, upDateDeps, toggles ){
 };
 
 
-export const useCacheAndStoreToggles = (fname, filepaths)=>{
+export const useCacheAndStoreToggles = (fname, filepaths, setOcache,ocache)=>{
+    // const [ocache,setOcache] = useState({});
     const { toggles:storeTog } = store.getState();
     const [toggles, setToggles] = useState(storeTog);
-    const [ocache, setOcache] = useState(blankDepObj);
 
     const run =  useCallback(() => {
         const { toggles:newTogs } = store.getState();
-        if (newTogs[fname] &&   Object.entries(ocache.payload).length === 0){
-            ftDepCacheShallow(fname, filepaths, ocache)
+        if (newTogs[fname] &&   (!ocache[fname] || Object.entries(ocache[fname].payload).length === 0)){
+            ftDepCacheShallow(fname, filepaths, ocache[fname] || {...blankDepObj})
             .then( newDeps => {
-                setOcache(newDeps);
+                setOcache( ()=>{ return {...ocache, [fname]:{...newDeps}}});
                 setToggles(()=>{return {...newTogs}});
              })
             .catch( (err) => console.log(err));
@@ -199,11 +199,11 @@ export const useCacheAndStoreToggles = (fname, filepaths)=>{
         else if(newTogs[fname] !== toggles[fname] ){
             setToggles(()=>newTogs);
         }
-    },[filepaths, fname, ocache, toggles]);
+    },[filepaths, fname, ocache, setOcache, toggles]);
 
     useEffect(()=>store.subscribe(run),[run, toggles]);
     run();
-    return [ocache, toggles];
+    return [ocache[fname] , toggles];
 }
 
 export default connect(mapStateToProps)(FToggle);

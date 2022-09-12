@@ -14,9 +14,11 @@ const f3_imports =[
 
 /* EXTERNAL USEAGE */
 
-const Main = ( )=> {
-    const [f2Cache, ] = useCacheAndStoreToggles('f2',f2_imports);
-    const [f3Cache, toggles] = useCacheAndStoreToggles('f3',f3_imports);
+const Main = ()=> {
+
+    const [ocache, setOcache] = useState({});
+    const [f2Cache, ] = useCacheAndStoreToggles('f2',f2_imports, setOcache, ocache);
+    const [f3Cache, toggles] = useCacheAndStoreToggles('f3',f3_imports,setOcache, ocache);
 
     // const [f3Cache,] = useCache('f3',f2_imports);
 
@@ -24,7 +26,7 @@ const Main = ( )=> {
 
     return (<div>
         <h1>Hello World.</h1>
-        <button onClick={()=>console.log( f2Cache, f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
+        <button onClick={()=>console.log( f2Cache,f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
         <p>This is a test</p>
         <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Needs to connect component to store  or use useStoreToggles custom hook </p>
          <FToggle fname="f1"
