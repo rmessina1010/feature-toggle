@@ -149,7 +149,7 @@ export function useReRend(){
    return [renderFlag, run ];
 }
 
-export function useStoreToggles(depsFoo, upDateDeps ){
+export function useTogglesAndStore(depsFoo, upDateDeps ){
 
     const { toggles:storeTog } = store.getState();
     const [toggles, setToggles] = useState(storeTog);
@@ -181,17 +181,17 @@ export function useToggles(depsFoo, upDateDeps, toggles ){
 };
 
 
-export const useCacheAndStoreToggles = (fname, filepaths, setOcache,ocache)=>{
-    // const [ocache,setOcache] = useState({});
+export const useCacheAndStore = (fname, filepaths)=>{
+    const [ocache,setOcache] = useState({...blankDepObj});
     const { toggles:storeTog } = store.getState();
     const [toggles, setToggles] = useState(storeTog);
 
     const run =  useCallback(() => {
         const { toggles:newTogs } = store.getState();
-        if (newTogs[fname] &&   (!ocache[fname] || Object.entries(ocache[fname].payload).length === 0)){
-            ftDepCacheShallow(fname, filepaths, ocache[fname] || {...blankDepObj})
+        if (newTogs[fname] &&   (!ocache || Object.entries(ocache.payload).length === 0)){
+            ftDepCacheShallow(fname, filepaths, ocache || {...blankDepObj})
             .then( newDeps => {
-                setOcache( ()=>{ return {...ocache, [fname]:{...newDeps}}});
+                setOcache( ()=>{ return {...newDeps}});
                 setToggles(()=>{return {...newTogs}});
              })
             .catch( (err) => console.log(err));
@@ -203,7 +203,24 @@ export const useCacheAndStoreToggles = (fname, filepaths, setOcache,ocache)=>{
 
     useEffect(()=>store.subscribe(run),[run, toggles]);
     run();
-    return [ocache[fname] , toggles];
+    return [ocache , toggles];
 }
-
+/** SKIP **/
+/**
+export const useCache2 = (fname, filepaths, setOcache,ocache)=>{
+    const { toggles } = store.getState();
+    const run =  useCallback(() => {
+        const { toggles:newTogs } = store.getState();
+        if (newTogs[fname] &&   (!ocache[fname] || Object.entries(ocache[fname].payload).length === 0)){
+            ftDepCacheShallow(fname, filepaths, ocache[fname] || {...blankDepObj})
+            .then( newDeps => {
+                setOcache( ()=>{ return {...ocache, [fname]:{...newDeps}}});
+             })
+            .catch( (err) => console.log(err));
+        }
+    },[filepaths, fname, ocache, setOcache]);
+    useEffect(()=> run(), [toggles, run]);
+    return [ocache[fname]];
+}
+**/
 export default connect(mapStateToProps)(FToggle);

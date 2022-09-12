@@ -1,4 +1,4 @@
-import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useStoreToggles, useToggles, useCacheAndStoreToggles} from './toggleSupport';
+import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useTogglesAndStore, useToggles, useCacheAndStore} from './toggleSupport';
 import {Feature1, Feature2, Feature3,} from './features'
 import { connect } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -16,17 +16,13 @@ const f3_imports =[
 
 const Main = ()=> {
 
-    const [ocache, setOcache] = useState({});
-    const [f2Cache, ] = useCacheAndStoreToggles('f2',f2_imports, setOcache, ocache);
-    const [f3Cache, toggles] = useCacheAndStoreToggles('f3',f3_imports,setOcache, ocache);
-
-    // const [f3Cache,] = useCache('f3',f2_imports);
-
+    const [f2Cache,] = useCacheAndStore('f2',f2_imports);
+    const [f3Cache,toggles] = useCacheAndStore('f3',f3_imports);
 
 
     return (<div>
         <h1>Hello World.</h1>
-        <button onClick={()=>console.log( f2Cache,f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
+        <button onClick={()=>console.log( f2Cache, f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
         <p>This is a test</p>
         <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Needs to connect component to store  or use useStoreToggles custom hook </p>
          <FToggle fname="f1"
