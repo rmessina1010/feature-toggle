@@ -17,12 +17,21 @@ const blankDepObj= {
 
 const FToggle = ({fname, toggles, children, old=null})=>{
     const [,setRerend] =useState (false);
+    const ftog=toggles?.[fname];
+
+    useEffect(()=>{setRerend(d=>!d) },[ftog]);
+
+    return  (!fname || ftog) ? <>{children}{JSON.stringify(toggles)}</> : old ;
+}
+
+export const  FToggleWithStore = ({fname, children, old=null})=>{
+    const [,setRerend] =useState (false);
+    const { toggles } = store.getState();
 
     useEffect(()=>{setRerend(d=>!d) },[toggles]);
 
     return  (!fname || toggles[fname]) ? <>{children}{JSON.stringify(toggles)}</> : old ;
 }
-
 
 export const ToggleImports =  await function (fname, imports=[]){
     const { toggles } = store.getState();
