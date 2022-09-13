@@ -1,11 +1,11 @@
 import './App.css';
 import Main from './components/main';
+import FTtest from './components/testFtoggle';
+import Dash from './components/dash'
 import { Provider } from 'react-redux';
 
 import { PersistGate } from 'redux-persist/es/integration/react';
 
-import * as ACTIONS  from './redux/actions';
-import toggles from './shared/toggles';
 import { persistor, store } from './redux/configStore';
 
 
@@ -18,10 +18,9 @@ function App() {
         persistor={persistor}
       >
         <div className="App">
+          <FTtest />
           <Main  />
-          <hr/>
-          <h5>This part mimics the feature toggle dashboard</h5>
-          { Object.keys(toggles).map(key => <button key={key} onClick={ ()=>store.dispatch({...ACTIONS.TOGGLE, fkey:key})} >Toggle {key.toUpperCase()}</button>)}
+          <Dash />
         </div>
        </PersistGate>
     </Provider>

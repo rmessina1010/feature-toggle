@@ -20,7 +20,7 @@ const FToggle = ({fname, toggles, children, old=null})=>{
 
     useEffect(()=>{setRerend(d=>!d) },[toggles]);
 
-    return  (!fname || toggles[fname]) ? <>{children}</> : old ;
+    return  (!fname || toggles[fname]) ? <>{children}{JSON.stringify(toggles)}</> : old ;
 }
 
 

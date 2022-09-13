@@ -14,7 +14,7 @@ const f3_imports =[
 
 /* EXTERNAL USEAGE */
 
-const Main = ()=> {
+const Main = ({toggle})=> {
 
     const [f2Cache,] = useCacheAndStore('f2',f2_imports);
     const [f3Cache,toggles] = useCacheAndStore('f3',f3_imports);
@@ -22,6 +22,7 @@ const Main = ()=> {
 
     return (<div>
         <h1>Hello World.</h1>
+        <p>{JSON.stringify(toggle)}</p>
         <button onClick={()=>console.log( f2Cache, f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
         <p>This is a test</p>
         <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Needs to connect component to store  or use useStoreToggles custom hook </p>
