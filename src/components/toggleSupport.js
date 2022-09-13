@@ -17,7 +17,7 @@ const blankDepObj= {
 
 const FToggle = ({fname, toggles, children, old=null})=>{
     const [,setRerend] =useState (false);
-    const ftog=toggles?.[fname];
+    const ftog=toggles?.[fname] || store.getState()?.[fname];
 
     useEffect(()=>{setRerend(d=>!d) },[ftog]);
 
