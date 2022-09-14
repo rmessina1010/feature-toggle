@@ -233,11 +233,19 @@ export const useCache2 = (fname, filepaths, setOcache,ocache)=>{
 }
 **/
 
-export const useRefreshOnToggle = ()=>{
-    const  [togs, setTogs]  = useState(store.getState().toggles);
-    const run  = useCallback(()=>setTogs(store.getState().toggles), [setTogs]);
-    useEffect(()=>store.subscribe(run),[run, togs]);
-    return togs;
+export const useRefreshOnToggle = (filt=[])=>{
+    const  [toggles, setTogs]  = useState(store.getState().toggles);
+    const run  = useCallback(()=>{
+        let shouldRerender = !(filt.length > 0) ;
+        const newToggles = store.getState().toggles;
+        filt.forEach(
+            tkey =>{  if (newToggles[tkey] !== toggles[tkey]){ shouldRerender = true;}
+        });
+        if (!shouldRerender) {return; }
+        setTogs(newToggles);
+    }, [setTogs, filt, toggles ]);
+    useEffect(()=>store.subscribe(run),[run, toggles] );
+    return toggles;
 }
 
 export default connect(mapStateToProps)(FToggle);
