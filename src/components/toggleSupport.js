@@ -201,18 +201,18 @@ export const useCacheAndStore = (fname, filepaths)=>{
             ftDepCacheShallow(fname, filepaths, ocache || {...blankDepObj})
             .then( newDeps => {
                 setOcache( ()=>{ return {...newDeps}});
-                setToggles(()=>{return {...newTogs}});
-             })
+                setToggles({...newTogs});
+              })
             .catch( (err) => console.log(err));
         }
         else if(newTogs[fname] !== toggles[fname] ){
-            setToggles(()=>newTogs);
-        }
+             setToggles(newTogs);
+         }
     },[filepaths, fname, ocache, setOcache, toggles]);
 
     useEffect(()=>store.subscribe(run),[run, toggles]);
     run();
-    return [ocache , toggles];
+    return [ocache];
 }
 /** SKIP **/
 /**
@@ -232,4 +232,12 @@ export const useCache2 = (fname, filepaths, setOcache,ocache)=>{
     return [ocache[fname]];
 }
 **/
+
+export const useRefreshOnToggle = ()=>{
+    const  [togs, setTogs]  = useState(store.getState().toggles);
+    const run  = useCallback(()=>setTogs(store.getState().toggles), [setTogs]);
+    useEffect(()=>store.subscribe(run),[run, togs]);
+    return togs;
+}
+
 export default connect(mapStateToProps)(FToggle);
