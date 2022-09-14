@@ -1,4 +1,4 @@
-import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useTogglesAndStore, useToggles, useCacheAndStore} from './toggleSupport';
+import FToggle, { ftDepCache, isFeatureOn, mapStateToProps, useCache, getTogglesState, useReRend, hasToggleChanged, useTogglesAndStore, useToggles, useCacheAndStore, FToggleWithStore} from './toggleSupport';
 import {Feature1, Feature2, Feature3,} from './features'
 import { connect } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -26,20 +26,20 @@ const Main = ()=> {
         <button onClick={()=>console.log( f2Cache, f3Cache,isFeatureOn("f2"), toggles.f2 )}>CLICK[for data in console]</button>
         <p>This is a test</p>
         <p>f2 is {isFeatureOn("f2") ? 'on' : 'off'}* <br/> Needs to connect component to store  or use useStoreToggles custom hook </p>
-         <FToggle fname="f1"
+         <FToggleWithStore fname="f1"
             old={
             <p><b>Am the outbound component;</b> alternate to feature 1</p>
             }
             children={ <Feature1/>}
         />
 
-         <FToggle fname="f2">
+         <FToggleWithStore fname="f2">
             <Feature2/>
             <p>{"local adition" + f2Cache?.payload?.namedExp2} </p>
-        </FToggle>
-        <FToggle fname="f3">
+        </FToggleWithStore>
+        <FToggleWithStore fname="f3">
             <Feature3/>
-        </FToggle>
+        </FToggleWithStore>
     </div>)
 }
 

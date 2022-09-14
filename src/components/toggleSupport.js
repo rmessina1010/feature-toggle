@@ -17,21 +17,21 @@ const blankDepObj= {
 
 const FToggle = ({fname, toggles, children, old=null})=>{
     const [,setRerend] =useState (false);
-    const ftog=toggles?.[fname] || store.getState()?.[fname];
+    const ftog=toggles?.[fname] || store.getState().toggles?.[fname];
 
     useEffect(()=>{setRerend(d=>!d) },[ftog]);
 
-    return  (!fname || ftog) ? <>{children}{JSON.stringify(toggles)}</> : old ;
+    return  (!fname || ftog) ? <>{children}</> : old ;
 }
 
 export const  FToggleWithStore = ({fname, children, old=null})=>{
-    const [,setRerend] =useState (false);
-    const { toggles } = store.getState();
-
-    useEffect(()=>{setRerend(d=>!d) },[toggles]);
-
-    return  (!fname || toggles[fname]) ? <>{children}{JSON.stringify(toggles)}</> : old ;
+    const [featureFlag,setFeatureFlag] = useState (store.getState().toggles?.[fname]);
+    const run =  ()=> setFeatureFlag(store.getState().toggles[fname]);
+    useEffect(run,[featureFlag, fname]);
+    store.subscribe(run);
+    return  (!fname || featureFlag) ? <>{children}</> : old ;
 }
+
 
 export const ToggleImports =  await function (fname, imports=[]){
     const { toggles } = store.getState();
