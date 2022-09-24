@@ -1,7 +1,8 @@
-import _, { set } from "lodash";
+import _ from "lodash";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { legacy_createStore } from "redux";
 import {store} from '../redux/configStore';
 
 
@@ -23,6 +24,46 @@ const FToggle = ({fname, toggles, children, old=null})=>{
 
     return  (!fname || ftog) ? <>{children}</> : old ;
 }
+
+
+/***/
+export const useToggleSelector = (fname)=>{
+    return useSelector( state => !fname === undefined ? state.toggles[fname] : state.toggles)
+}
+
+export const useToggleSelectorDeps = (fname, filepaths )=>{
+    const [ocache,setOcache] = useState({...blankDepObj});
+    const ftog = useSelector( state => state.toggles[fname]);
+    const run =  useCallback(() => {
+        if (ftog && !Object.keys(ocache.payload).length){
+            ftDepCacheShallow(fname, filepaths, ocache)
+            .then( newDeps => { setOcache({...newDeps});})
+            .catch( (err) => console.log(err));
+        }
+    },[filepaths, ocache, ftog, fname]);
+    useEffect(()=> run(), [ftog, run]);
+    return [ocache];
+}
+export const useToggleSelectorDepsCache = (fname, filepaths )=>{
+    const [ocache,setOcache] = useState({...blankDepObj});
+    const ftog = useSelector( state => state.toggles[fname]);
+    const run =  useCallback(() => {
+        if (ftog && !Object.keys(ocache.payload).length){
+            ftDepCacheShallow(fname, filepaths, ocache)
+            .then( newDeps => { setOcache({...newDeps});})
+            .catch( (err) => console.log(err));
+        }
+    },[filepaths, ocache, ftog, fname]);
+    useEffect(()=> run(), [ftog, run]);
+    return [ocache,ftog];
+}
+export const  FToggleSelector = ({fname, children, old=null})=>{
+    const ftoggle= useSelector( state => state.toggles[fname]);
+    return  ftoggle ? <>{children}</> : old ;
+}
+
+/***/
+
 
 export const  FToggleWithStore = ({fname, children, old=null})=>{
     const [featureFlag,setFeatureFlag] = useState (store.getState().toggles?.[fname]);
@@ -248,4 +289,4 @@ export const useRefreshOnToggle = (filt=[])=>{
     return toggles;
 }
 
-export default connect(mapStateToProps)(FToggle);
+export default  FToggle;
