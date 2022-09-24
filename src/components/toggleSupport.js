@@ -2,7 +2,6 @@ import _ from "lodash";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { legacy_createStore } from "redux";
 import {store} from '../redux/configStore';
 
 
@@ -26,24 +25,26 @@ const FToggle = ({fname, toggles, children, old=null})=>{
 }
 
 
-/***/
+/**SELECTOR**/
 export const useToggleSelector = (fname)=>{
     return useSelector( state => !fname === undefined ? state.toggles[fname] : state.toggles)
 }
 
-export const useToggleSelectorDeps = (fname, filepaths )=>{
-    const [ocache,setOcache] = useState({...blankDepObj});
+export const useToggleSelectorDeps = (fname, cacheFoo)=>{
     const ftog = useSelector( state => state.toggles[fname]);
-    const run =  useCallback(() => {
-        if (ftog && !Object.keys(ocache.payload).length){
-            ftDepCacheShallow(fname, filepaths, ocache)
-            .then( newDeps => { setOcache({...newDeps});})
-            .catch( (err) => console.log(err));
-        }
-    },[filepaths, ocache, ftog, fname]);
-    useEffect(()=> run(), [ftog, run]);
-    return [ocache];
+    const [,set_RenderFlag] = useState(false);
+    const handleUpdate = useCallback(()=>{
+        let cacheHook = cacheFoo();
+        if (cacheHook.cache[fname] && Object.keys(cacheHook.cache[fname].payload).length){  return ;}
+        ftDepCache(fname, cacheHook.imports[fname], cacheHook.cache)
+        .then( newDeps =>{
+                cacheHook.setter(newDeps);
+                set_RenderFlag((rf)=>!rf);
+        });
+    }, [cacheFoo, fname ]);
+    useEffect(()=>handleUpdate(), [ ftog, handleUpdate ]);
 }
+
 export const useToggleSelectorDepsCache = (fname, filepaths )=>{
     const [ocache,setOcache] = useState({...blankDepObj});
     const ftog = useSelector( state => state.toggles[fname]);
@@ -60,6 +61,19 @@ export const useToggleSelectorDepsCache = (fname, filepaths )=>{
 export const  FToggleSelector = ({fname, children, old=null})=>{
     const ftoggle= useSelector( state => state.toggles[fname]);
     return  ftoggle ? <>{children}</> : old ;
+}
+
+export const dynamicImportsReducer =  (allImports) => {
+    const arrKeys = Object.keys(allImports);
+    return dynamicImportsReducerRecursion (allImports, arrKeys, 0, {})
+}
+
+const dynamicImportsReducerRecursion =  (allImports, arrKeys, start, acc ) =>{
+    if (arrKeys.length > start ) {
+       acc = ftDepCache(arrKeys[start], allImports[arrKeys[start]], acc)
+       .then( res => dynamicImportsReducerRecursion(allImports, arrKeys,start+1, res) )
+    }
+    return acc;
 }
 
 /***/
@@ -141,7 +155,7 @@ export const importFtDeps =  async function (fname, fromFile, imports =[] ){
 
 export const ftDepCache = async function (fname, filepaths=[], cache={}){
     const { toggles } = store.getState();
-    if ( toggles[fname] && (!cache[fname] || Object.entries(cache[fname].payload).length === 0 )) {
+    if ( toggles[fname] && (!cache[fname] || Object.keys(cache[fname].payload))) {
         cache[fname]= await ftDepCacheShallow(fname, filepaths, cache[fname] || {...blankDepObj});
     }
     return cache;
