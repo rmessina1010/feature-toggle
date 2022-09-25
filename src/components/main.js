@@ -15,15 +15,17 @@ const f3_imports =[
 const allFtImports =  {f2:f2_imports , f3: f3_imports } ;
 
 /* EXTERNAL USEAGE */
-//  initiate a variable to hold the import
-let deps = await dynamicImportsReducer(allFtImports);
-const impClosure = () => {return {imports:allFtImports, cache:deps, setter: newDeps=>deps=newDeps }} // define a fucntion that updates the import cache  ( this is always teh same  and  will be passed to the  custom hook)
+//  initiate a variable to hold the import, and define a function that returns the importbase, variable and a callback to det said variable
+let [deps ,updateCache] = await dynamicImportsReducer(
+    allFtImports,
+    () => {return {imports:allFtImports, cache:deps, setter: newDeps=>deps=newDeps }}
+);
 
 const Main = ()=> {
     let ct = useRef(0);
    const toggles = useToggleSelector();
-   useToggleSelectorDeps('f2',impClosure);
-   useToggleSelectorDeps('f3',impClosure);
+   useToggleSelectorDeps('f2',updateCache);
+   useToggleSelectorDeps('f3',updateCache);
     ct.current++
 
     return (<div>
