@@ -15,11 +15,10 @@ const f3_imports =[
 const allFtImports =  {f2:f2_imports , f3: f3_imports } ;
 
 /* EXTERNAL USEAGE */
-//  initiate a variable to hold the import, and define a function that returns the importbase, variable and a callback to det said variable
-let [deps ,updateCache] = await dynamicImportsReducer(
-    allFtImports,
-    () => {return {imports:allFtImports, cache:deps, setter: newDeps=>deps=newDeps }}
-);
+//  initiate a variable to hold the import
+let deps = await dynamicImportsReducer(allFtImports);
+//  define a function that returns the importbase, variable and a callback to det said variable
+const updateCache = () => {return {imports:allFtImports, cache:deps, setter: newDeps=>deps=newDeps }}
 
 const Main = ()=> {
     let ct = useRef(0);

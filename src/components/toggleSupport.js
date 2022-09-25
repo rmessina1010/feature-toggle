@@ -65,7 +65,7 @@ export const  FToggleSelector = ({fname, children, old=null})=>{
 
 export const dynamicImportsReducer =  (allImports, callBackHook) => {
     const arrKeys = Object.keys(allImports);
-    return [ dynamicImportsReducerRecursion (allImports, arrKeys, 0, {}), callBackHook] ;
+    return  dynamicImportsReducerRecursion (allImports, arrKeys, 0, {}) ;
 }
 
 const dynamicImportsReducerRecursion =  (allImports, arrKeys, start, acc ) =>{
