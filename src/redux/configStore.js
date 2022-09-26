@@ -1,4 +1,6 @@
 import { persistStore, persistReducer } from 'redux-persist'
+import sessionStorage from 'redux-persist/lib/storage/session'
+
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { createStore } from 'redux';
 import toggles from '../shared/toggles';
@@ -7,7 +9,7 @@ import rootReducer  from './reducers';
 
 const persistConfig = {
   key: 'root',
-  storage
+  storage:sessionStorage
 }
 
 const ConfigureStore = () => {
